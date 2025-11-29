@@ -5,7 +5,7 @@
 
 A secure, client-side text and QR code encryption tool using AES-GCM, with a Matrix/CRT hacker-style interface. Works completely offline in the browser and with Python for generating QR codes.
 
-![Screenshot](screenshot.png)
+![Screenshot](https://github.com/mahdizebardastbarzin/Ultra-Hacker-QR-AES-GCM-Encryption/blob/main/Ultra_Hacker_QR.jpg)
 
 ## 🌟 Features
 - 🔒 AES-GCM Encryption (256-bit)
@@ -64,6 +64,7 @@ MIT License
 
 ## 🤝 مشارکت
 مشارکت‌های شما باعث خوشحالی ماست! لطفاً Pull Request ارسال کنید.
+
 
 
 
