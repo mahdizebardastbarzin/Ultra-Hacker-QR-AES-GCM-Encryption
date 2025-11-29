@@ -21,12 +21,6 @@ A secure, client-side text and QR code encryption tool using AES-GCM, with a Mat
 - Modern browser
 - Python 3
 
-### Installation
-```bash
-git clone https://github.com/madresema/Ultra-Hacker-QR.git
-cd Ultra-Hacker-QR
-python qr_encrypt.py
-```
 Open `index.html` in your browser.
 
 ---
@@ -53,10 +47,12 @@ Open `index.html` in your browser.
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## 🤝 Contributing
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are welcome! Please read our Contributing Guidelines to get started.
 
-## 📧 Contact
-Your Name - [@yourtwitter](https://twitter.com/yourtwitter) - your.email@example.com
+## 🤝 مشارکت
+مشارکت‌های شما خوش‌آمد است! لطفاً راهنمای مشارکت را مطالعه کنید
+
+
 
 ## 🙏 Credits
 - [Pyodide](https://pyodide.org/) - Python in the browser
@@ -71,3 +67,4 @@ MIT License
 
 ## 📧 تماس با ما
 نام شما - [@yourtwitter](https://twitter.com/yourtwitter) - your.email@example.com
+
