@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="fa">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>رمزگشایی QR (AES-GCM)</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+      /* افکت متن سبز دیجیتالی ماتریکسی */
+  @keyframes matrixGlow {
+    from { text-shadow: 0 0 5px #00ff9c; }
+    to { text-shadow: 0 0 20px #00ff9c; }
+  }
+
+  h2, h3 {
+    animation: matrixGlow 2s infinite alternate;
+  }
+  </style>
+  <!-- کتابخانه jsQR برای خواندن QR از تصویر -->
+  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+</head>
+<body>
+    <!-- عناصر بارش ماتریکس -->
+<div class="matrix-rain">
+  
+</div>
+  <h2>بارگذاری تصویر QR یا پیست کردن متن QR و رمزگشایی با کلید</h2>
+
+  <label>۱) فایل تصویر QR را آپلود کن (یا از کادر پایین متن QR را پیست کن):</label>
+  <input type="file" id="fileInput" accept="image/*" />
+  <div class="note">یا</div>
+  <label>متن داخل QR (Base64 payload):</label>
+  <textarea id="payloadInput" rows="3" placeholder="اگر QR را اسکن نمی‌کنی، می‌توانی اینجا payload را پیست کنی"></textarea>
+
+  <label>۲) کلید (Base64) — همان چیزی که اسکریپت پایتون چاپ کرده:</label>
+  <input id="keyInput" placeholder="مثال: m9... (Base64)" />
+
+  <button id="decodeBtn">خواندن QR (در صورت آپلود) و رمزگشایی</button>
+
+  <h3>نتیجه:</h3>
+  <pre id="result" style="white-space: pre-wrap; word-break: break-word;"></pre>
+
+  <canvas id="canvas"></canvas>
+
+<script>
+  // توابع کمکی Base64 URL-safe ↔ Uint8Array
+  function base64ToUint8Array(b64url) {
+    // تبدیل URL-safe به استاندارد
+    b64 = b64url.replace(/-/g, '+').replace(/_/g, '/');
+    // padding
+    while (b64.length % 4) { b64 += '='; }
+    const str = atob(b64);
+    const arr = new Uint8Array(str.length);
+    for (let i = 0; i < str.length; i++) arr[i] = str.charCodeAt(i);
+    return arr;
+  }
+
+  function uint8ArrayToBase64Url(bytes) {
+    let binary = '';
+    for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]);
+    let b64 = btoa(binary);
+    // to url-safe
+    return b64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/,'');
+  }
+
+  async function importKeyFromBase64(keyB64) {
+    const keyBytes = base64ToUint8Array(keyB64);
+    return await crypto.subtle.importKey(
+      'raw',
+      keyBytes,
+      { name: 'AES-GCM' },
+      false,
+      ['decrypt']
+    );
+  }
+
+  async function decryptPayload(keyB64, payloadB64) {
+    try {
+      const key = await importKeyFromBase64(keyB64);
+      const data = base64ToUint8Array(payloadB64);
+      // iv: اول 12 بایت، بقیه ciphertext+tag
+      const iv = data.slice(0, 12);
+      const ct = data.slice(12);
+      const plainBuf = await crypto.subtle.decrypt(
+        { name: 'AES-GCM', iv: iv },
+        key,
+        ct
+      );
+      const dec = new TextDecoder().decode(plainBuf);
+      return { ok: true, text: dec };
+    } catch (e) {
+      return { ok: false, error: e.toString() };
+    }
+  }
+
+  // خواندن تصویر و اسکن QR با jsQR
+  function scanImageFile(file) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      const reader = new FileReader();
+      reader.onload = function(ev) {
+        img.onload = function() {
+          const canvas = document.getElementById('canvas');
+          const ctx = canvas.getContext('2d');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          ctx.drawImage(img, 0, 0);
+          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          const code = jsQR(imageData.data, imageData.width, imageData.height);
+          if (code) resolve(code.data);
+          else reject('QR پیدا نشد یا ناخواناست.');
+        };
+        img.onerror = function() { reject('خطا در بارگذاری تصویر.'); };
+        img.src = ev.target.result;
+      };
+      reader.onerror = function() { reject('خطا در خواندن فایل.'); };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  document.getElementById('decodeBtn').addEventListener('click', async () => {
+    const fileInput = document.getElementById('fileInput');
+    const payloadField = document.getElementById('payloadInput');
+    const keyField = document.getElementById('keyInput');
+    const result = document.getElementById('result');
+    result.textContent = '';
+
+    let payload = payloadField.value.trim();
+    if (!payload && fileInput.files.length > 0) {
+      // اگر payload پیست نشده و فایل آپلود شده، تلاش به اسکن
+      try {
+        payload = await scanImageFile(fileInput.files[0]);
+      } catch (err) {
+        result.textContent = 'خطا هنگام اسکن تصویر: ' + err;
+        return;
+      }
+    }
+
+    if (!payload) {
+      result.textContent = 'هیچ payload یا تصویر QR داده نشده است.';
+      return;
+    }
+    const keyB64 = keyField.value.trim();
+    if (!keyB64) {
+      result.textContent = 'کلید داده نشده است.';
+      return;
+    }
+
+    result.textContent = 'در حال رمزگشایی...';
+    const res = await decryptPayload(keyB64, payload);
+    if (res.ok) {
+      result.textContent = 'متن اصلی:\n\n' + res.text;
+    } else {
+      result.textContent = 'رمزگشایی ناموفق: ' + res.error;
+    }
+  });
+</script>
+</body>
+</html>

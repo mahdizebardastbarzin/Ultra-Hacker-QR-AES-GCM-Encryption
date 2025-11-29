@@ -1,0 +1,153 @@
+
+  /* --- ULTRA HACKER MATRIX CRT MODE --- */
+
+  body {
+    margin: auto;
+    width: 80%;
+    font-family: "Courier New", monospace;
+    direction: rtl;
+    text-align: right;
+    padding: 30px;
+    background: #000;
+    color: #00ff9c;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* CRT Scanline Effect */
+  body::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: repeating-linear-gradient(
+      to bottom,
+      rgba(0, 255, 140, 0.03) 0px,
+      rgba(0, 255, 140, 0.03) 2px,
+      rgba(0, 0, 0, 0.1) 4px
+    );
+    pointer-events: none;
+    z-index: 100;
+  }
+
+  /* CRT Noise */
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    /* background: url('https://i.imgur.com/8V4R8mE.png'); */
+    opacity: 0.07;
+    mix-blend-mode: screen;
+    pointer-events: none;
+    z-index: 101;
+  }
+
+  h2, h3 {
+    color: #00ffe0;
+    text-shadow: 0 0 10px #00ffe0, 0 0 30px #00ffe0;
+    animation: glowPulse 1.8s infinite alternate;
+  }
+
+  @keyframes glowPulse {
+    from { text-shadow: 0 0 10px #00ffe0; }
+    to { text-shadow: 0 0 30px #00ffe0; }
+  }
+
+  input, textarea, button {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    box-sizing: border-box;
+    background: rgba(0, 255, 150, 0.06);
+    border: 1px solid #00ff9c;
+    color: #00ff9c;
+    border-radius: 6px;
+    outline: none;
+    backdrop-filter: blur(3px);
+    transition: 0.25s;
+  }
+
+  input:focus, textarea:focus {
+    box-shadow: 0 0 20px #00ff9c;
+  }
+
+  button {
+    background: linear-gradient(90deg, #00ff9c, #00ffe0);
+    color: #000;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    letter-spacing: 2px;
+    text-shadow: none;
+    transition: 0.25s;
+  }
+
+  button:hover {
+    background: linear-gradient(90deg, #00ffe0, #00ff9c);
+    box-shadow: 0 0 25px #00ffea;
+    transform: translateY(-2px);
+  }
+
+  .note {
+    font-size: 0.9rem;
+    color: #00ffe0;
+    opacity: 0.7;
+  }
+
+  pre#result {
+    padding: 18px;
+    border: 1px solid #00ffea;
+    background: rgba(0, 255, 200, 0.07);
+    box-shadow: inset 0 0 25px #00ffea;
+    border-radius: 6px;
+    color: #00ffea;
+    text-shadow: 0 0 12px #00ffea;
+    backdrop-filter: blur(2px);
+  }
+
+  /* Matrix Rain Effect — قشنگ خفن */
+  .matrix-rain {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 50;
+    opacity: 0.14;
+    font-size: 18px;
+    color: #00ff9c;
+    line-height: 16px;
+    font-family: monospace;
+    animation: rainMove 20s linear infinite;
+    white-space: pre;
+  }
+
+  @keyframes rainMove {
+    from { transform: translateY(-100%); }
+    to { transform: translateY(100%); }
+  }
+
+  /* سایه و درخشش پنجره‌ها */
+  input, textarea, pre {
+    animation: flicker 3s infinite steps(20);
+  }
+
+  @keyframes flicker {
+    0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+      opacity: 1;
+    }
+    20%, 24%, 55% {
+      opacity: 0.8;
+    }
+  }
+
+  /* اسکرول هکری */
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-track { background: #001a12; }
+  ::-webkit-scrollbar-thumb {
+    background: #00ff9c;
+    box-shadow: 0 0 12px #00ff9c;
+  }
+
+
+
