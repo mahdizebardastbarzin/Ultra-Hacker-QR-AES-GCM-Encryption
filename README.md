@@ -65,6 +65,5 @@ MIT License
 ## 🤝 مشارکت
 مشارکت‌های شما باعث خوشحالی ماست! لطفاً Pull Request ارسال کنید.
 
-## 📧 تماس با ما
-نام شما - [@yourtwitter](https://twitter.com/yourtwitter) - your.email@example.com
+
 
